@@ -1,0 +1,37 @@
+//movement and animation code
+
+rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"))
+     * speed * Time.deltaTime;
+
+     animator.SetFloat("moveX", rb.velocity.x);
+     animator.SetFloat("moveY", rb.velocity.y);
+   
+     if (Input.GetAxisRaw("Horizontal") == 1 || Input.GetAxisRaw("Horizontal") == -1)
+     {
+      animator.SetFloat("lastMoveX", Input.GetAxisRaw("Horizontal"));
+     }
+     
+     //instantiating and fire bullet code 
+     
+      void Update()
+    {
+        lookDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90f);
+
+        if ((Input.GetMouseButtonDown(0)) && (Time.time >= nextTimeToFire)) 
+        {
+            animator.SetBool("castBall", true);
+            nextTimeToFire = Time.time + 10f / fireRate;
+            FireBullet();
+        }
+    }
+    
+    
+
+    private void FireBullet()
+    {
+        GameObject firedBullet = Instantiate(bullet, barrelTip.position, barrelTip.rotation);
+        firedBullet.GetComponent<Rigidbody2D>().velocity = barrelTip.up * 4f;
+    }
+}
